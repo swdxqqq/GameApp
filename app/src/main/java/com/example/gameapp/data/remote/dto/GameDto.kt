@@ -1,5 +1,6 @@
 package com.example.gameapp.data.remote.dto
 
+import com.example.gameapp.domain.model.Game
 import com.google.gson.annotations.SerializedName
 
 data class GameListResponse(
@@ -14,7 +15,7 @@ data class GameDto(
     @SerializedName("released") val released: String?,
     @SerializedName("background_image") val backgroundImage: String?,
     @SerializedName("rating") val rating: Double,
-    @SerializedName("metacritic") val metacritic: Int,
+    @SerializedName("metacritic") val metacritic: Int?,
     @SerializedName("playtime") val playtime: Int,
     @SerializedName("genres") val genres: List<GenreDto>
 )
@@ -23,3 +24,16 @@ data class GenreDto(
     @SerializedName("id") val id: Int,
     @SerializedName("name") val name: String
 )
+
+fun GameDto.toDomain(): Game {
+    return Game(
+        id = id,
+        name = name,
+        released = released,
+        backgroundImage = backgroundImage,
+        rating = rating,
+        metacritic = metacritic,
+        playtime = playtime,
+        genres = genres.map {it.name}
+    )
+}

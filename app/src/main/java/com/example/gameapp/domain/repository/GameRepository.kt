@@ -8,7 +8,7 @@ interface GameRepository {
     suspend fun getGames(page: Int, pageSize: Int): List<Game>
 
     // Получить детали об игре по API
-    suspend fun getGamesDetail(gameId: Int): Game
+    suspend fun getGameDetail(gameId: Int): Game
 
     // Получить избранные игры с локльной БД
     fun getFavoriteGames(): Flow<List<Game>>

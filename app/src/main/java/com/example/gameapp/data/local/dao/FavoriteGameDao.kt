@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface FavoriteGameDao {
     // Получить все избранные игры
     @Query("SELECT * FROM favorite_games ORDER BY addedAt DESC")
-    fun getFavoritesGames(): Flow<List<FavoriteGameEntity>>
+    fun getFavoriteGames(): Flow<List<FavoriteGameEntity>>
 
     // Проверить есть ли игра в избранном
     @Query("SELECT EXISTS(SELECT 1 FROM favorite_games WHERE id = :gameId)")
