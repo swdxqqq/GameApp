@@ -6,6 +6,7 @@ import com.example.gameapp.domain.model.Game
 import com.example.gameapp.domain.usecase.GetFavoritesUseCase
 import com.example.gameapp.domain.usecase.GetGamesUseCase
 import com.example.gameapp.domain.usecase.ToggleFavoritesUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,6 +22,7 @@ data class GamesUiState(
     val currentPage: Int = 1
 )
 
+@HiltViewModel
 class GamesViewModel @Inject constructor(
     private val getGamesUseCase: GetGamesUseCase,
     private val getFavoritesUseCase: GetFavoritesUseCase,
