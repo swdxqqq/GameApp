@@ -10,7 +10,7 @@ interface GameRepository {
     // Получить детали об игре по API
     suspend fun getGameDetail(gameId: Int): Game
 
-    // Получить избранные игры с локльной БД
+    // Получить избранные игры с локальной БД
     fun getFavoriteGames(): Flow<List<Game>>
 
     // Добавить игру в избранное. Передаем всю игру а не ID,

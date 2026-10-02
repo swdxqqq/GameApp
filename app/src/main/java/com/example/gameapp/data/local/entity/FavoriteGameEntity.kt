@@ -2,7 +2,6 @@ package com.example.gameapp.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.gameapp.data.local.dao.FavoriteGameDao
 import com.example.gameapp.domain.model.Game
 import kotlin.collections.joinToString
 
@@ -43,6 +42,6 @@ fun FavoriteGameEntity.toDomain(): Game{
         rating = rating,
         metacritic = metacritic,
         playtime = playtime,
-        genres = genres.split(",").filter {it.isNotEmpty()}
+        genres = genres.split(",").filter { it.isNotEmpty()}
     )
 }

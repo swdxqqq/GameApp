@@ -17,7 +17,7 @@ interface FavoriteGameDao {
     @Query("SELECT EXISTS(SELECT 1 FROM favorite_games WHERE id = :gameId)")
     suspend fun isFavorite(gameId: Int): Boolean
 
-    //Добавить игру в избранное
+    // Добавить игру в избранное
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addToFavorites(game: FavoriteGameEntity)
 

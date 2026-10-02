@@ -1,6 +1,5 @@
 package com.example.gameapp.data.repository
 
-import androidx.compose.foundation.pager.PageSize
 import com.example.gameapp.data.local.dao.FavoriteGameDao
 import com.example.gameapp.data.local.entity.toDomain
 import com.example.gameapp.data.local.entity.toEntity
@@ -18,7 +17,7 @@ class GameRepositoryImpl @Inject constructor(
     private val apiKey: String
 ) : GameRepository {
 
-    override suspend fun getGames(page: Int, pageSize: Int): List <Game>{
+    override suspend fun getGames(page: Int, pageSize: Int): List<Game>{
         val response = api.getGames(apiKey, page, pageSize)
         return response.results.map { it.toDomain()}
     }

@@ -61,8 +61,7 @@ class GamesViewModel @Inject constructor(
     private fun loadFavorites() {
         viewModelScope.launch {
             getFavoritesUseCase().collect { // collect - потому что подписываемся на получаемые данные
-                favoritesList ->
-                _uiState.value = _uiState.value.copy(favorites = favoritesList)
+                favoritesList -> _uiState.value = _uiState.value.copy(favorites = favoritesList)
             }
         }
     }

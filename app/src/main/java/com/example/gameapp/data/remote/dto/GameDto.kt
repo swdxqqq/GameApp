@@ -34,6 +34,6 @@ fun GameDto.toDomain(): Game {
         rating = rating,
         metacritic = metacritic,
         playtime = playtime,
-        genres = genres.map {it.name}
+        genres = genres.map { it.name}
     )
 }
