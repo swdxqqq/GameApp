@@ -83,4 +83,11 @@ class GamesViewModel @Inject constructor(
         val nextPage = _uiState.value.currentPage + 1
         loadGames(nextPage)
     }
+
+    fun loadPreviousPage(){
+        val previousPage = _uiState.value.currentPage - 1
+        if (previousPage >= 1){
+            loadGames(previousPage)
+        }
+    }
 }
