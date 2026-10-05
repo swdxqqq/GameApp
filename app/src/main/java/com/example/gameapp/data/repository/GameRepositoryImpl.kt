@@ -5,6 +5,7 @@ import com.example.gameapp.data.local.entity.toDomain
 import com.example.gameapp.data.local.entity.toEntity
 import com.example.gameapp.data.remote.RawgApi
 import com.example.gameapp.data.remote.dto.toDomain
+import com.example.gameapp.di.ApiKey
 import com.example.gameapp.domain.model.Game
 import com.example.gameapp.domain.repository.GameRepository
 import kotlinx.coroutines.flow.Flow
@@ -14,6 +15,7 @@ import javax.inject.Inject
 class GameRepositoryImpl @Inject constructor(
     private val api: RawgApi,
     private val dao: FavoriteGameDao,
+    @ApiKey
     private val apiKey: String
 ) : GameRepository {
 
