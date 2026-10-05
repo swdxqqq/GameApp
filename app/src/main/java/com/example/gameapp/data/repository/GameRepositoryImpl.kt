@@ -19,8 +19,8 @@ class GameRepositoryImpl @Inject constructor(
     private val apiKey: String
 ) : GameRepository {
 
-    override suspend fun getGames(page: Int, pageSize: Int): List<Game>{
-        val response = api.getGames(apiKey, page, pageSize)
+    override suspend fun getGames(page: Int, pageSize: Int, search: String?): List<Game>{
+        val response = api.getGames(apiKey, page, pageSize, search = search)
         return response.results.map { it.toDomain()}
     }
 

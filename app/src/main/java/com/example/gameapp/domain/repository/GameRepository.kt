@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface GameRepository {
     // Получить список игр по API
-    suspend fun getGames(page: Int, pageSize: Int): List<Game>
+    suspend fun getGames(page: Int = 1, pageSize: Int, search: String? = null): List<Game>
 
     // Получить детали об игре по API
     suspend fun getGameDetail(gameId: Int): Game

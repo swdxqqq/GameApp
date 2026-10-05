@@ -2,6 +2,7 @@ package com.example.gameapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.room.Query
 import com.example.gameapp.domain.model.Game
 import com.example.gameapp.domain.usecase.GetFavoritesUseCase
 import com.example.gameapp.domain.usecase.GetGamesUseCase
@@ -19,7 +20,8 @@ data class GamesUiState(
     val favorites: List<Game> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
-    val currentPage: Int = 1
+    val currentPage: Int = 1,
+    val searchQuery: String = ""
 )
 
 @HiltViewModel
@@ -37,11 +39,11 @@ class GamesViewModel @Inject constructor(
     }
 
     // Корутина для загрузки игр
-    private fun loadGames(page: Int = 1){
+    private fun loadGames(page: Int = 1, search: String? = null){
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             try{
-                val games = getGamesUseCase(page = page)
+                val games = getGamesUseCase(page = page, search = search)
                 _uiState.value = _uiState.value.copy(
                     games = games,
                     currentPage = page,
@@ -81,13 +83,20 @@ class GamesViewModel @Inject constructor(
     // Функция для вызова корутины с новой страницей
     fun loadNextPage(){
         val nextPage = _uiState.value.currentPage + 1
-        loadGames(nextPage)
+        val search = _uiState.value.searchQuery.ifBlank { null }
+        loadGames(nextPage, search)
     }
 
     fun loadPreviousPage(){
         val previousPage = _uiState.value.currentPage - 1
         if (previousPage >= 1){
-            loadGames(previousPage)
+            val search = _uiState.value.searchQuery.ifBlank { null }
+            loadGames(previousPage, search)
         }
+    }
+
+    fun onSearchQueryChange(query: String){
+        _uiState.value = _uiState.value.copy(searchQuery = query)
+        loadGames(page = 1, search = query.ifBlank { null })
     }
 }
