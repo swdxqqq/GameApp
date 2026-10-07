@@ -13,7 +13,8 @@ interface RawgApi {
         @Query("key") apiKey: String,
         @Query("page") page: Int = 1,
         @Query("page_size") pageSize: Int = 20,
-        @Query("search") search: String? = null
+        @Query("search") search: String? = null,
+        @Query("ordering") ordering: String? = null
     ): GameListResponse
 
     // Получить данные об игре

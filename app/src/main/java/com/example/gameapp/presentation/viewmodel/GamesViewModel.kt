@@ -2,7 +2,6 @@ package com.example.gameapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.room.Query
 import com.example.gameapp.domain.model.Game
 import com.example.gameapp.domain.usecase.GetFavoritesUseCase
 import com.example.gameapp.domain.usecase.GetGamesUseCase
@@ -21,7 +20,8 @@ data class GamesUiState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val currentPage: Int = 1,
-    val searchQuery: String = ""
+    val searchQuery: String = "",
+    val sortOrder: SortOrder= SortOrder.DEFAULT
 )
 
 @HiltViewModel
@@ -39,11 +39,19 @@ class GamesViewModel @Inject constructor(
     }
 
     // Корутина для загрузки игр
-    private fun loadGames(page: Int = 1, search: String? = null){
+    private fun loadGames(
+        page: Int = 1,
+        search: String? = null,
+        ordering: String? = _uiState.value.sortOrder.apiValue
+        ){
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             try{
-                val games = getGamesUseCase(page = page, search = search)
+                val games = getGamesUseCase(
+                    page = page,
+                    search = search,
+                    ordering = ordering
+                )
                 _uiState.value = _uiState.value.copy(
                     games = games,
                     currentPage = page,
@@ -84,19 +92,42 @@ class GamesViewModel @Inject constructor(
     fun loadNextPage(){
         val nextPage = _uiState.value.currentPage + 1
         val search = _uiState.value.searchQuery.ifBlank { null }
-        loadGames(nextPage, search)
+        loadGames(
+            nextPage,
+            search,
+            ordering = _uiState.value.sortOrder.apiValue
+            )
     }
 
     fun loadPreviousPage(){
         val previousPage = _uiState.value.currentPage - 1
         if (previousPage >= 1){
             val search = _uiState.value.searchQuery.ifBlank { null }
-            loadGames(previousPage, search)
+            loadGames(
+                previousPage,
+                search,
+                ordering = _uiState.value.sortOrder.apiValue
+            )
         }
     }
 
     fun onSearchQueryChange(query: String){
         _uiState.value = _uiState.value.copy(searchQuery = query)
-        loadGames(page = 1, search = query.ifBlank { null })
+        loadGames(
+            page = 1,
+            search = query.ifBlank { null },
+            ordering = _uiState.value.sortOrder.apiValue
+            )
+    }
+
+    fun onSortOrderChange(sortOrder: SortOrder){
+        _uiState.value = _uiState.value.copy(sortOrder = sortOrder)
+
+        val search = _uiState.value.searchQuery.ifBlank { null }
+        loadGames(
+            page = 1,
+            search = search,
+            ordering = sortOrder.apiValue
+            )
     }
 }

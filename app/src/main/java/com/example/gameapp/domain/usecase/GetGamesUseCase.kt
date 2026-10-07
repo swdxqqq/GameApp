@@ -5,7 +5,12 @@ import com.example.gameapp.domain.repository.GameRepository
 import javax.inject.Inject
 
 class GetGamesUseCase @Inject constructor(private val repository: GameRepository) {
-    suspend operator fun invoke(page: Int = 1, pageSize: Int = 20, search: String? = null): List<Game> {
-        return repository.getGames(page, pageSize, search)
+    suspend operator fun invoke(
+        page: Int = 1,
+        pageSize: Int = 20,
+        search: String? = null,
+        ordering: String? = null
+    ): List<Game> {
+        return repository.getGames(page, pageSize, search, ordering)
     }
 }

@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Favorite
@@ -23,13 +24,20 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -38,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.example.gameapp.domain.model.Game
 import com.example.gameapp.presentation.viewmodel.GamesViewModel
+import com.example.gameapp.presentation.viewmodel.SortOrder
 
 @Composable
 fun GamesScreen(viewModel: GamesViewModel) {
@@ -80,6 +89,39 @@ fun GamesScreen(viewModel: GamesViewModel) {
             },
             singleLine = true
         )
+
+        var isSortMenuExpanded by remember { mutableStateOf(false) }
+
+        Box {
+            OutlinedButton(
+                onClick = { isSortMenuExpanded = true },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = uiState.sortOrder.title)
+
+                Icon(
+                    imageVector = Icons.Default.ArrowDropDown,
+                    contentDescription = "Sort options"
+                )
+            }
+
+            DropdownMenu(
+                expanded = isSortMenuExpanded,
+                onDismissRequest = { isSortMenuExpanded = false }
+            ) {
+                SortOrder.entries.forEach { sortOrder ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(sortOrder.title)
+                        },
+                        onClick = {
+                            isSortMenuExpanded = false
+                            viewModel.onSortOrderChange(sortOrder)
+                        }
+                    )
+                }
+            }
+        }
 
         when {
             uiState.isLoading && uiState.games.isEmpty() -> {
