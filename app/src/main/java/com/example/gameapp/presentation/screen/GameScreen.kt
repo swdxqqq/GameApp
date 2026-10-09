@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -70,6 +71,7 @@ fun GamesScreen(viewModel: GamesViewModel) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
+            shape = RoundedCornerShape(16.dp),
             placeholder = { Text("Search games...") },
             leadingIcon = {
                 Icon(
@@ -95,7 +97,8 @@ fun GamesScreen(viewModel: GamesViewModel) {
         Box {
             OutlinedButton(
                 onClick = { isSortMenuExpanded = true },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp)
             ) {
                 Text(text = uiState.sortOrder.title)
 
@@ -243,8 +246,8 @@ fun GameCard(
                 model = game.backgroundImage,
                 contentDescription = game.name,
                 modifier = Modifier
-                    .width(80.dp)
-                    .height(80.dp),
+                    .width(180.dp)
+                    .height(120.dp),
                 contentScale = ContentScale.Crop
             )
 
