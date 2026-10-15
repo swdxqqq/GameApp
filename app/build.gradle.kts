@@ -74,4 +74,16 @@ dependencies {
     implementation(libs.coil.network.okhttp)
 
     implementation(libs.androidx.navigation.compose)
+
+    testImplementation("org.mockito:mockito-core:5.14.2")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+    testImplementation("org.mockito:mockito-inline:5.2.0")
+    testImplementation(kotlin("test"))
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+    
+    androidTestImplementation("org.mockito:mockito-android:5.14.2")
+    androidTestImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.4")
 }
