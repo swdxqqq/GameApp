@@ -1,6 +1,8 @@
 package com.example.gameapp.data.repository
 
+import com.example.gameapp.data.local.dao.CustomGameDao
 import com.example.gameapp.data.local.dao.FavoriteGameDao
+import com.example.gameapp.data.local.entity.toCustomEntity
 import com.example.gameapp.data.local.entity.toDomain
 import com.example.gameapp.data.local.entity.toEntity
 import com.example.gameapp.data.remote.RawgApi
@@ -15,6 +17,7 @@ import javax.inject.Inject
 class GameRepositoryImpl @Inject constructor(
     private val api: RawgApi,
     private val dao: FavoriteGameDao,
+    private val customGameDao: CustomGameDao,
     @ApiKey
     private val apiKey: String
 ) : GameRepository {
@@ -57,5 +60,20 @@ class GameRepositoryImpl @Inject constructor(
 
     override suspend fun isFavorite(gameId: Int): Boolean {
         return dao.isFavorite(gameId)
+    }
+
+    override fun getCustomGames(): Flow<List<Game>> {
+        return customGameDao.getAllCustomGames().map { entities ->
+            entities.map { it.toDomain() }
+        }
+    }
+
+    override suspend fun addCustomGame(game: Game): Unit {
+        val customEntity = game.toCustomEntity()
+        customGameDao.addCustomGame(customEntity)
+    }
+
+    override suspend fun deleteCustomGame(gameId: Int): Unit {
+        customGameDao.deleteCustomGame(gameId)
     }
 }

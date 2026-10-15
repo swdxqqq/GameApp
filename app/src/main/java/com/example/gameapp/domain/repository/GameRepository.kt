@@ -27,4 +27,10 @@ interface GameRepository {
 
     // Проверить, в избранном ли
     suspend fun isFavorite(gameId: Int): Boolean
+
+    fun getCustomGames(): Flow<List<Game>>
+
+    suspend fun addCustomGame(game: Game): Unit
+
+    suspend fun deleteCustomGame(gameId: Int): Unit
 }

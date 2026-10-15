@@ -22,8 +22,11 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -53,11 +56,24 @@ import com.example.gameapp.presentation.viewmodel.SortOrder
 fun GamesScreen(viewModel: GamesViewModel) {
     val uiState = viewModel.uiState.collectAsState().value
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { viewModel.toggleAddGameDialog() }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Добавить игру"
+                )
+            }
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp)
+        ) {
         Text(
             text = "Games",
             style = MaterialTheme.typography.headlineMedium,
@@ -158,12 +174,14 @@ fun GamesScreen(viewModel: GamesViewModel) {
             }
 
             else -> {
+                val allGames = uiState.customGames + uiState.games
+                
                 LazyColumn(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(bottom = 16.dp)
                 ) {
-                    items(uiState.games) { game ->
+                    items(allGames) { game ->
                         GameCard(
                             game = game,
                             isFavorite = uiState.favorites.any { it.id == game.id },
@@ -221,6 +239,15 @@ fun GamesScreen(viewModel: GamesViewModel) {
                 }
             }
         }
+        }
+    }
+    
+    // Add Game Dialog
+    if (uiState.showAddGameDialog) {
+        AddGameDialog(
+            onDismiss = { viewModel.toggleAddGameDialog() },
+            onAddGame = { game -> viewModel.addCustomGame(game) }
+        )
     }
 }
 

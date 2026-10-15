@@ -3,6 +3,8 @@ package com.example.gameapp.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gameapp.domain.model.Game
+import com.example.gameapp.domain.usecase.AddCustomGameUseCase
+import com.example.gameapp.domain.usecase.GetCustomGamesUseCase
 import com.example.gameapp.domain.usecase.GetFavoritesUseCase
 import com.example.gameapp.domain.usecase.GetGamesUseCase
 import com.example.gameapp.domain.usecase.ToggleFavoritesUseCase
@@ -17,18 +19,23 @@ import javax.inject.Inject
 data class GamesUiState(
     val games: List<Game> = emptyList(),
     val favorites: List<Game> = emptyList(),
+    val customGames: List<Game> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
     val currentPage: Int = 1,
     val searchQuery: String = "",
-    val sortOrder: SortOrder= SortOrder.DEFAULT
+    val sortOrder: SortOrder= SortOrder.DEFAULT,
+    val showAddGameDialog: Boolean = false
 )
 
 @HiltViewModel
 class GamesViewModel @Inject constructor(
     private val getGamesUseCase: GetGamesUseCase,
     private val getFavoritesUseCase: GetFavoritesUseCase,
-    private val toggleFavoritesUseCase: ToggleFavoritesUseCase
+    private val toggleFavoritesUseCase: ToggleFavoritesUseCase,
+    private val getCustomGamesUseCase: GetCustomGamesUseCase,
+    private val addCustomGameUseCase: AddCustomGameUseCase
+
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(GamesUiState()) // Приватное изменяемое свойство доступное только из ViewModel
     val uiState: StateFlow<GamesUiState> = _uiState.asStateFlow() // Свойство, которое подписывается на оригинал. Можно только читать
@@ -36,6 +43,7 @@ class GamesViewModel @Inject constructor(
     init{
         loadGames()
         loadFavorites()
+        loadCustomGames()
     }
 
     // Корутина для загрузки игр
@@ -129,5 +137,27 @@ class GamesViewModel @Inject constructor(
             search = search,
             ordering = sortOrder.apiValue
             )
+    }
+
+    private fun loadCustomGames(){
+        viewModelScope.launch {
+            getCustomGamesUseCase().collect { customList: List<Game> ->
+                _uiState.value = _uiState.value.copy(customGames = customList)
+            }
+        }
+    }
+
+    fun  addCustomGame(game: Game){
+        viewModelScope.launch {
+            addCustomGameUseCase(game).onSuccess {
+                _uiState.value = _uiState.value.copy(showAddGameDialog = false)
+            }.onFailure {
+                e -> _uiState.value = _uiState.value.copy(error = e.message)
+            }
+        }
+    }
+
+    fun toggleAddGameDialog(){
+        _uiState.value = _uiState.value.copy(showAddGameDialog = !_uiState.value.showAddGameDialog)
     }
 }
