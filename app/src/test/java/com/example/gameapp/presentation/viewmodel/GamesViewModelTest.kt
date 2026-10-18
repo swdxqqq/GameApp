@@ -45,6 +45,9 @@ class GamesViewModelTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
 
+        runTest(testDispatcher) {
+            whenever(mockGetGamesUseCase(page = 1, search = null, ordering = null)).thenReturn(emptyList())
+        }
         whenever(mockGetFavoritesUseCase()).thenReturn(flowOf(emptyList()))
         whenever(mockGetCustomGamesUseCase()).thenReturn(flowOf(emptyList()))
     }
@@ -179,5 +182,119 @@ class GamesViewModelTest {
 
         assertEquals(2, viewModel.uiState.value.favorites.size)
         assertEquals("Fav1", viewModel.uiState.value.favorites[0].name)
+    }
+
+    @Test
+    fun loadCustomGamesShouldUpdateStateWithCustomGamesList() = runTest(testDispatcher) {
+        val customGames = listOf(
+            Game(100, "Custom1", "2023-01-01", "url100", 5.0, 0, 0, emptyList()),
+            Game(101, "Custom2", "2023-02-02", "url101", 4.5, 0, 0, emptyList())
+        )
+
+        whenever(mockGetFavoritesUseCase()).thenReturn(flowOf(emptyList()))
+        whenever(mockGetCustomGamesUseCase()).thenReturn(flowOf(customGames))
+
+        viewModel = GamesViewModel(
+            mockGetGamesUseCase,
+            mockGetFavoritesUseCase,
+            mockToggleFavoritesUseCase,
+            mockGetCustomGamesUseCase,
+            mockAddCustomGameUseCase
+        )
+
+        testScheduler.advanceUntilIdle()
+
+        assertEquals(2, viewModel.uiState.value.customGames.size)
+        assertEquals("Custom1", viewModel.uiState.value.customGames[0].name)
+    }
+
+    @Test
+    fun toggleFavoriteShouldHandleException() = runTest(testDispatcher) {
+        val testGame = Game(3, "Error Game", "2020-01-01", "url3", 4.0, 80, 10, emptyList())
+        val errorMessage = "Network error"
+
+        whenever(mockToggleFavoritesUseCase(testGame)).thenThrow(RuntimeException(errorMessage))
+
+        viewModel = GamesViewModel(
+            mockGetGamesUseCase,
+            mockGetFavoritesUseCase,
+            mockToggleFavoritesUseCase,
+            mockGetCustomGamesUseCase,
+            mockAddCustomGameUseCase
+        )
+
+        testScheduler.advanceUntilIdle()
+
+        viewModel.toggleFavorite(testGame)
+        testScheduler.advanceUntilIdle()
+
+        assertEquals(errorMessage, viewModel.uiState.value.error)
+    }
+
+    @Test
+    fun addCustomGameShouldHandleFailure() = runTest(testDispatcher) {
+        val testGame = Game(102, "Failed Game", "2023-03-03", "url102", 3.0, 0, 0, emptyList())
+        val errorMessage = "Database error"
+
+        whenever(mockAddCustomGameUseCase(testGame)).thenReturn(Result.failure(Exception(errorMessage)))
+
+        viewModel = GamesViewModel(
+            mockGetGamesUseCase,
+            mockGetFavoritesUseCase,
+            mockToggleFavoritesUseCase,
+            mockGetCustomGamesUseCase,
+            mockAddCustomGameUseCase
+        )
+
+        testScheduler.advanceUntilIdle()
+
+        viewModel.toggleAddGameDialog()
+        viewModel.addCustomGame(testGame)
+        testScheduler.advanceUntilIdle()
+
+        assertEquals(errorMessage, viewModel.uiState.value.error)
+        assertTrue(viewModel.uiState.value.showAddGameDialog)
+    }
+
+    @Test
+    fun initialStateShouldHaveCorrectDefaults() = runTest(testDispatcher) {
+        viewModel = GamesViewModel(
+            mockGetGamesUseCase,
+            mockGetFavoritesUseCase,
+            mockToggleFavoritesUseCase,
+            mockGetCustomGamesUseCase,
+            mockAddCustomGameUseCase
+        )
+
+        testScheduler.advanceUntilIdle()
+
+        val state = viewModel.uiState.value
+        assertFalse(state.isLoading)
+        assertEquals(null, state.error)
+        assertEquals("", state.searchQuery)
+    }
+
+    @Test
+    fun multipleTogglesShouldMaintainDialogState() = runTest(testDispatcher) {
+        viewModel = GamesViewModel(
+            mockGetGamesUseCase,
+            mockGetFavoritesUseCase,
+            mockToggleFavoritesUseCase,
+            mockGetCustomGamesUseCase,
+            mockAddCustomGameUseCase
+        )
+
+        testScheduler.advanceUntilIdle()
+
+        assertFalse(viewModel.uiState.value.showAddGameDialog)
+
+        viewModel.toggleAddGameDialog()
+        assertTrue(viewModel.uiState.value.showAddGameDialog)
+
+        viewModel.toggleAddGameDialog()
+        assertFalse(viewModel.uiState.value.showAddGameDialog)
+
+        viewModel.toggleAddGameDialog()
+        assertTrue(viewModel.uiState.value.showAddGameDialog)
     }
 }
