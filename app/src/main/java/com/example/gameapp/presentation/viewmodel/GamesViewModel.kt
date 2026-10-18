@@ -1,5 +1,6 @@
 package com.example.gameapp.presentation.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gameapp.domain.model.Game
@@ -8,6 +9,7 @@ import com.example.gameapp.domain.usecase.GetCustomGamesUseCase
 import com.example.gameapp.domain.usecase.GetFavoritesUseCase
 import com.example.gameapp.domain.usecase.GetGamesUseCase
 import com.example.gameapp.domain.usecase.ToggleFavoritesUseCase
+import com.example.gameapp.domain.usecase.UploadImageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,7 +36,8 @@ class GamesViewModel @Inject constructor(
     private val getFavoritesUseCase: GetFavoritesUseCase,
     private val toggleFavoritesUseCase: ToggleFavoritesUseCase,
     private val getCustomGamesUseCase: GetCustomGamesUseCase,
-    private val addCustomGameUseCase: AddCustomGameUseCase
+    private val addCustomGameUseCase: AddCustomGameUseCase,
+    private val uploadImageUseCase: UploadImageUseCase
 
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(GamesUiState()) // Приватное изменяемое свойство доступное только из ViewModel
@@ -159,5 +162,9 @@ class GamesViewModel @Inject constructor(
 
     fun toggleAddGameDialog(){
         _uiState.value = _uiState.value.copy(showAddGameDialog = !_uiState.value.showAddGameDialog)
+    }
+
+    suspend fun uploadImage(uri: Uri): Result<String> {
+        return uploadImageUseCase(uri)
     }
 }

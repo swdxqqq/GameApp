@@ -246,7 +246,8 @@ fun GamesScreen(viewModel: GamesViewModel) {
     if (uiState.showAddGameDialog) {
         AddGameDialog(
             onDismiss = { viewModel.toggleAddGameDialog() },
-            onAddGame = { game -> viewModel.addCustomGame(game) }
+            onAddGame = { game -> viewModel.addCustomGame(game) },
+            viewModel = viewModel
         )
     }
 }
@@ -294,7 +295,7 @@ fun GameCard(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "Rating: ${game.rating}/10",
+                    text = "Rating: ${game.rating}/5",
                     style = MaterialTheme.typography.bodySmall
                 )
 

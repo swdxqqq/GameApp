@@ -11,25 +11,34 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.gameapp.domain.model.Game
+import com.example.gameapp.presentation.viewmodel.GamesViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun AddGameDialog(
     onDismiss: () -> Unit,
-    onAddGame: (Game) -> Unit
+    onAddGame: (Game) -> Unit,
+    viewModel: GamesViewModel
 ) {
     var name by remember { mutableStateOf("") }
     var released by remember { mutableStateOf("") }
     var rating by remember { mutableStateOf("") }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     var dateError by remember { mutableStateOf(false) }
+    var isUploading by remember { mutableStateOf(false) }
+    var uploadError by remember { mutableStateOf<String?>(null) }
+    
+    val coroutineScope = rememberCoroutineScope()
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -97,6 +106,27 @@ fun AddGameDialog(
                     Text(if (imageUri == null) "Choose image *" else "Image chosen")
                 }
 
+                // Upload status
+                if (isUploading) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text("Uploading to Supabase...")
+                    }
+                }
+
+                uploadError?.let { error ->
+                    Text(
+                        text = error,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+
                 // Image preview
                 imageUri?.let { uri ->
                     AsyncImage(
@@ -120,24 +150,36 @@ fun AddGameDialog(
                         && imageUri != null
                         && isValidDate(released)
                     ) {
-                        val game = Game(
-                            id = System.currentTimeMillis().toInt(),
-                            name = name,
-                            released = released.ifBlank { null },
-                            backgroundImage = imageUri.toString(),
-                            rating = rating.toDoubleOrNull() ?: 0.0,
-                            metacritic = null,
-                            playtime = 0,
-                            genres = emptyList()
-                        )
-                        onAddGame(game)
-                        onDismiss()
+                        isUploading = true
+                        uploadError = null
+                        
+                        coroutineScope.launch {
+                            viewModel.uploadImage(imageUri!!).onSuccess { publicUrl ->
+                                val game = Game(
+                                    id = System.currentTimeMillis().toInt(),
+                                    name = name,
+                                    released = released.ifBlank { null },
+                                    backgroundImage = publicUrl,
+                                    rating = rating.toDoubleOrNull() ?: 0.0,
+                                    metacritic = null,
+                                    playtime = 0,
+                                    genres = emptyList()
+                                )
+                                onAddGame(game)
+                                isUploading = false
+                                onDismiss()
+                            }.onFailure { e ->
+                                uploadError = "Upload failed: ${e.message}"
+                                isUploading = false
+                            }
+                        }
                     }
                 },
                 enabled = name.isNotBlank()
                         && rating.isNotBlank()
                         && imageUri != null
                         && !dateError
+                        && !isUploading
             ) {
                 Text("Add")
             }

@@ -7,6 +7,7 @@ import com.example.gameapp.domain.usecase.GetCustomGamesUseCase
 import com.example.gameapp.domain.usecase.GetFavoritesUseCase
 import com.example.gameapp.domain.usecase.GetGamesUseCase
 import com.example.gameapp.domain.usecase.ToggleFavoritesUseCase
+import com.example.gameapp.domain.usecase.UploadImageUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
@@ -36,6 +37,7 @@ class GamesViewModelTest {
     private val mockToggleFavoritesUseCase: ToggleFavoritesUseCase = mock()
     private val mockGetCustomGamesUseCase: GetCustomGamesUseCase = mock()
     private val mockAddCustomGameUseCase: AddCustomGameUseCase = mock()
+    private val mockUploadImageUseCase: UploadImageUseCase = mock()
 
     private lateinit var viewModel: GamesViewModel
 
@@ -64,7 +66,8 @@ class GamesViewModelTest {
             mockGetFavoritesUseCase,
             mockToggleFavoritesUseCase,
             mockGetCustomGamesUseCase,
-            mockAddCustomGameUseCase
+            mockAddCustomGameUseCase,
+            mockUploadImageUseCase
         )
 
         testScheduler.advanceUntilIdle()
@@ -84,7 +87,8 @@ class GamesViewModelTest {
             mockGetFavoritesUseCase,
             mockToggleFavoritesUseCase,
             mockGetCustomGamesUseCase,
-            mockAddCustomGameUseCase
+            mockAddCustomGameUseCase,
+            mockUploadImageUseCase
         )
 
         testScheduler.advanceUntilIdle()
@@ -116,7 +120,8 @@ class GamesViewModelTest {
             mockGetFavoritesUseCase,
             mockToggleFavoritesUseCase,
             mockGetCustomGamesUseCase,
-            mockAddCustomGameUseCase
+            mockAddCustomGameUseCase,
+            mockUploadImageUseCase
         )
 
         testScheduler.advanceUntilIdle()
@@ -149,7 +154,8 @@ class GamesViewModelTest {
             mockGetFavoritesUseCase,
             mockToggleFavoritesUseCase,
             mockGetCustomGamesUseCase,
-            mockAddCustomGameUseCase
+            mockAddCustomGameUseCase,
+            mockUploadImageUseCase
         )
 
         testScheduler.advanceUntilIdle()
@@ -175,7 +181,8 @@ class GamesViewModelTest {
             mockGetFavoritesUseCase,
             mockToggleFavoritesUseCase,
             mockGetCustomGamesUseCase,
-            mockAddCustomGameUseCase
+            mockAddCustomGameUseCase,
+            mockUploadImageUseCase
         )
 
         testScheduler.advanceUntilIdle()
@@ -199,7 +206,8 @@ class GamesViewModelTest {
             mockGetFavoritesUseCase,
             mockToggleFavoritesUseCase,
             mockGetCustomGamesUseCase,
-            mockAddCustomGameUseCase
+            mockAddCustomGameUseCase,
+            mockUploadImageUseCase
         )
 
         testScheduler.advanceUntilIdle()
@@ -220,7 +228,8 @@ class GamesViewModelTest {
             mockGetFavoritesUseCase,
             mockToggleFavoritesUseCase,
             mockGetCustomGamesUseCase,
-            mockAddCustomGameUseCase
+            mockAddCustomGameUseCase,
+            mockUploadImageUseCase
         )
 
         testScheduler.advanceUntilIdle()
@@ -243,7 +252,8 @@ class GamesViewModelTest {
             mockGetFavoritesUseCase,
             mockToggleFavoritesUseCase,
             mockGetCustomGamesUseCase,
-            mockAddCustomGameUseCase
+            mockAddCustomGameUseCase,
+            mockUploadImageUseCase
         )
 
         testScheduler.advanceUntilIdle()
@@ -263,7 +273,8 @@ class GamesViewModelTest {
             mockGetFavoritesUseCase,
             mockToggleFavoritesUseCase,
             mockGetCustomGamesUseCase,
-            mockAddCustomGameUseCase
+            mockAddCustomGameUseCase,
+            mockUploadImageUseCase
         )
 
         testScheduler.advanceUntilIdle()
@@ -281,7 +292,8 @@ class GamesViewModelTest {
             mockGetFavoritesUseCase,
             mockToggleFavoritesUseCase,
             mockGetCustomGamesUseCase,
-            mockAddCustomGameUseCase
+            mockAddCustomGameUseCase,
+            mockUploadImageUseCase
         )
 
         testScheduler.advanceUntilIdle()

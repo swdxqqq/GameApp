@@ -75,6 +75,11 @@ dependencies {
 
     implementation(libs.androidx.navigation.compose)
 
+    // Supabase
+    implementation(platform("io.github.jan-tennert.supabase:bom:2.6.0"))
+    implementation("io.github.jan-tennert.supabase:storage-kt")
+    implementation("io.ktor:ktor-client-android:2.3.12")
+
     testImplementation("org.mockito:mockito-core:5.14.2")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
     testImplementation("org.mockito:mockito-inline:5.2.0")
